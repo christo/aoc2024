@@ -1,6 +1,5 @@
 package com.chromosundrift.aoc2024
 
-import java.util.concurrent.atomic.AtomicInteger
 import scala.io.Source
 
 def getTestInput1 = {
