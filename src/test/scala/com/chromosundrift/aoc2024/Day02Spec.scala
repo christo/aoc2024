@@ -100,11 +100,11 @@ class Day02Spec extends AnyFlatSpec with Matchers {
   }
 
   "Day02" should "solve part 1" in {
-    Day02.part1(getTestInput1) shouldBe 371
+    Day02.part1(Day02.getTestInput1) shouldBe 371
   }
 
   it should "solve part 1 Alt" in {
-    Day02.part1Alt(getTestInput1) shouldBe 371
+    Day02.part1Alt(Day02.getTestInput1) shouldBe 371
   }
 
   it should "pass test input part 2" in {
