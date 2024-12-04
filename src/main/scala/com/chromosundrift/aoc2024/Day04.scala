@@ -80,7 +80,6 @@ object Day04 {
   private def findWords(needle: String, haystack: Array[String], i: Int, j: Int, deltas: DeltaSpec): Int = {
     var wordCount = 0
     deltas.foreach { strip =>
-      // there is room for the word, check and apply each delta
       var found = true
       for (index <- needle.indices) {
         val letterDelta = strip(index)
