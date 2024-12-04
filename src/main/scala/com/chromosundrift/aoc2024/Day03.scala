@@ -20,7 +20,7 @@ object Day03 {
       val rhs = m.group(2).toInt
       lhs * rhs
     }
-    return products.sum
+    products.sum
   }
 
   def part2(str: String): Int = {
@@ -32,13 +32,13 @@ object Day03 {
         if (m.group(1) == "mul") {
           product = m.group(2).toInt * m.group(3).toInt
         } else if (m.group(5) == "don't") {
-          enabled = false;
+          enabled = false
         }
       } else if (m.group(4) == "do"){
         enabled = true
       }
       product
     }
-    return products.sum
+    products.sum
   }
 }
