@@ -90,15 +90,12 @@ object Day04 {
           found = false
         } else {
           val findLetter = needle(index)
-          //        val deltaSpec = s"EndDeltaOffset: ${iEndDeltaOffset},${jEndDeltaOffset} lastDelta: ${lastDelta}"
-          //        println(s" ${findLetter} base: $i,$j @offset $ii,$jj | ${strip} | ${deltaSpec}")
           if (needle(index) != haystack(jj)(ii)) {
             found = false
           }
         }
       }
       if (found) {
-        //        println(s"found ${needle} at ${i},${j} using delta ${strip}")
         wordCount += 1
       }
     }
