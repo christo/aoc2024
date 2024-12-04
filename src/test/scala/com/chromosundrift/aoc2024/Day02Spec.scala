@@ -6,12 +6,12 @@ import org.scalatest.matchers.should.Matchers
 class Day02Spec extends AnyFlatSpec with Matchers {
 
   val testInput: List[String] = List(
-    "7 6 4 2 1",  // safe
-    "1 2 7 8 9",  // jump up too big
-    "9 7 6 2 1",  // jump down too big
-    "1 3 2 4 5",  // change of direction - nonmonotonic
-    "8 6 4 4 1",  // no change disallowed
-    "1 3 6 7 9",  // safe
+π    "7 6 4 2 1", // safe
+    "1 2 7 8 9", // jump up too big
+    "9 7 6 2 1", // jump down too big
+    "1 3 2 4 5", // change of direction - nonmonotonic
+    "8 6 4 4 1", // no change disallowed
+    "1 3 6 7 9", // safe
   )
 
 
@@ -46,12 +46,12 @@ class Day02Spec extends AnyFlatSpec with Matchers {
 
 
   "internal functions" should "detect monotonic sequences" in {
-    val deltas = List(1,4,5,1,3,5)
+    val deltas = List(1, 4, 5, 1, 3, 5)
     Day02.monotonic(deltas) shouldBe true
   }
 
   it should "handle all negative deltas as monotonic sequences" in {
-    val deltas = List(-1,-4,-5,-1,-3,-5)
+    val deltas = List(-1, -4, -5, -1, -3, -5)
     Day02.monotonic(deltas) shouldBe true
   }
 
