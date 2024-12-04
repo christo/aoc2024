@@ -46,7 +46,6 @@ object Day02 {
 
   private def tryRemoving1(report: List[Int]): Option[Int] = {
     for (i <- report.indices) {
-      // remove one
       val oneRemoved = report.zipWithIndex.filter(_._2 != i)
       if (allSafe(oneRemoved.map(_._1))) return Some(i)
     }
