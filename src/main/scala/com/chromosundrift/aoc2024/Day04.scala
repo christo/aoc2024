@@ -5,7 +5,7 @@ import scala.io.Source
 type DeltaSpec = Seq[List[(Int, Int)]]
 
 object Day04 {
-  val part1Sample =
+  private val part1Sample =
     """MMMSXXMASM
       |MSAMXMSMSA
       |AMXSXMAAMM
@@ -17,7 +17,7 @@ object Day04 {
       |MAMMMXMMMM
       |MXMXAXMASX""".stripMargin
 
-  val part2Sample =
+  private val part2Sample =
     """.M.S......
       |..A..MSMS.
       |.M.S.MAA..
@@ -30,22 +30,22 @@ object Day04 {
       |..........""".stripMargin
 
   val part1SampleOccurrences = 18
-  val part1Targets = List("XMAS", "SAMX")
+  private val part1Targets = List("XMAS", "SAMX")
   // only need to handle half the directions: LtR, TLtBR, TtB, LRtBL
   // because we search for both forwards and backwards words
-  val part1Deltas: DeltaSpec = List(
+  private val part1Deltas: DeltaSpec = List(
     List((0, 0), (0, 1), (0, 2), (0, 3)), // left to right
     List((0, 0), (1, 1), (2, 2), (3, 3)), // top left to bottom right
     List((0, 0), (1, 0), (2, 0), (3, 0)), // top to bottom
     List((0, 0), (1, -1), (2, -2), (3, -3)), // top right to bottom left
   )
 
-  val part2Targets = List("MASMAS", "MASSAM", "SAMMAS", "SAMSAM")
-  val part2Deltas: DeltaSpec = List(
+  private val part2Targets = List("MASMAS", "MASSAM", "SAMMAS", "SAMSAM")
+  private val part2Deltas: DeltaSpec = List(
     List((0, 0), (1, 1), (2, 2), (0, 2), (1, 1), (2, 0)), // TLtBR,BLtTR
   )
 
-  def getTestInput1 = {
+  def getTestInput1: String = {
     Source.fromResource("day04_input1.txt").mkString
   }
 
@@ -57,7 +57,7 @@ object Day04 {
     println(solve(part2Targets, part2Deltas, input))
   }
 
-  def solve(targets: List[String], deltas: DeltaSpec, input: String): Int = {
+  private def solve(targets: List[String], deltas: DeltaSpec, input: String): Int = {
     var wordCount = 0
     val rows = input.split('\n')
 
@@ -74,10 +74,10 @@ object Day04 {
         wordCount += targets.map(t => findWords(t, rows, i, j, deltas)).sum
       }
     }
-    return wordCount
+    wordCount
   }
 
-  def findWords(needle: String, haystack: Array[String], i: Int, j: Int, deltas: DeltaSpec): Int = {
+  private def findWords(needle: String, haystack: Array[String], i: Int, j: Int, deltas: DeltaSpec): Int = {
     var wordCount = 0
     deltas.foreach { strip =>
       // there is room for the word, check and apply each delta
@@ -103,6 +103,6 @@ object Day04 {
         wordCount += 1
       }
     }
-    return wordCount
+    wordCount
   }
 }
