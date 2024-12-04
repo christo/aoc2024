@@ -3,14 +3,12 @@ package com.chromosundrift.aoc2024
 import scala.io.Source
 
 
-
-
 object Day02 {
 
   def getTestInput1 = {
     Source.fromResource("day02_input1.txt").getLines().toList
   }
-  
+
   def dump[A](x: List[A]): Unit = {
     println(x.mkString(", "))
   }
