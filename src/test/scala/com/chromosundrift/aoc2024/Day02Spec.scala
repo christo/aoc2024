@@ -6,14 +6,13 @@ import org.scalatest.matchers.should.Matchers
 class Day02Spec extends AnyFlatSpec with Matchers {
 
   val testInput: List[String] = List(
-π    "7 6 4 2 1", // safe
+    "7 6 4 2 1", // safe
     "1 2 7 8 9", // jump up too big
     "9 7 6 2 1", // jump down too big
     "1 3 2 4 5", // change of direction - nonmonotonic
     "8 6 4 4 1", // no change disallowed
     "1 3 6 7 9", // safe
   )
-
 
   "day02 part 1" should "give whole correct test output" in {
     Day02.part1(testInput) shouldBe 2
@@ -43,7 +42,6 @@ class Day02Spec extends AnyFlatSpec with Matchers {
     val ints = Day02.ints(testInput(0))
     Day02.allSafe(ints) shouldBe true
   }
-
 
   "internal functions" should "detect monotonic sequences" in {
     val deltas = List(1, 4, 5, 1, 3, 5)
