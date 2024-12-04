@@ -5,7 +5,7 @@ import scala.io.Source
 
 object Day02 {
 
-  def getTestInput1 = {
+  def getTestInput1: List[String] = {
     Source.fromResource("day02_input1.txt").getLines().toList
   }
 
@@ -59,10 +59,10 @@ object Day02 {
   }
 
   def allSafe(report: List[Int]): Boolean = {
-    val ds = deltas(report).toList
-    val monotonics: Seq[Boolean] = consistentSigns(ds).toList
-    val inRanges: Seq[Boolean] = ds.map(inRange).toList
-    return monotonics.forall(identity) && inRanges.forall(identity)
+    val ds = deltas(report)
+    val monotonics: Seq[Boolean] = consistentSigns(ds)
+    val inRanges: Seq[Boolean] = ds.map(inRange)
+    monotonics.forall(identity) && inRanges.forall(identity)
   }
 
   private def part2SafeCount(report: List[Int]): Boolean = {
@@ -75,16 +75,13 @@ object Day02 {
     safes.count(identity)
   }
 
-  def tryRemoving1(report: List[Int]): Option[Int] = {
+  private def tryRemoving1(report: List[Int]): Option[Int] = {
     for (i <- report.indices) {
       // remove one
       val oneRemoved = report.zipWithIndex.filter(_._2 != i)
-      val newSafeness = allSafe(oneRemoved.map(_._1))
-      if (newSafeness) {
-        return Some(i)
-      }
+      if (allSafe(oneRemoved.map(_._1))) return Some(i)
     }
-    return None
+    None
   }
 }
 
