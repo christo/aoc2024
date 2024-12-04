@@ -5,29 +5,6 @@ import scala.io.Source
 type DeltaSpec = Seq[List[(Int, Int)]]
 
 object Day04 {
-  private val part1Sample =
-    """MMMSXXMASM
-      |MSAMXMSMSA
-      |AMXSXMAAMM
-      |MSAMASMSMX
-      |XMASAMXAMM
-      |XXAMMXXAMA
-      |SMSMSASXSS
-      |SAXAMASAAA
-      |MAMMMXMMMM
-      |MXMXAXMASX""".stripMargin
-
-  private val part2Sample =
-    """.M.S......
-      |..A..MSMS.
-      |.M.S.MAA..
-      |..A.ASMSM.
-      |.M.S.M....
-      |..........
-      |S.S.S.S.S.
-      |.A.A.A.A..
-      |M.M.M.M.M.
-      |..........""".stripMargin
 
   val part1SampleOccurrences = 18
   private val part1Targets = List("XMAS", "SAMX")
@@ -45,15 +22,15 @@ object Day04 {
     List((0, 0), (1, 1), (2, 2), (0, 2), (1, 1), (2, 0)), // TLtBR,BLtTR
   )
 
-  def getTestInput1: String = {
-    Source.fromResource("day04_input1.txt").mkString
+  private def getInput(file: String): String = {
+    Source.fromResource(file).mkString
   }
 
   def main(args: Array[String]): Unit = {
-    val input = getTestInput1
-    println(solve(part1Targets, part1Deltas, part1Sample))
+    val input = getInput("day04_input1.txt")
+    println(solve(part1Targets, part1Deltas, getInput("day04_sample1.txt")))
     println(solve(part1Targets, part1Deltas, input))
-    println(solve(part2Targets, part2Deltas, part2Sample))
+    println(solve(part2Targets, part2Deltas, getInput("day04_sample2.txt")))
     println(solve(part2Targets, part2Deltas, input))
   }
 
@@ -61,16 +38,12 @@ object Day04 {
     var wordCount = 0
     val rows = input.split('\n')
 
-    // we assume for now we have rectangle puzzle
-
     assert(rows.length > 0)
     val rowLength = rows(0).length
     assert(rows.forall(r => r.length == rowLength))
 
     for (j <- rows.indices) {
-      val row = rows(j)
-      for (i <- row.indices) {
-        // both can't succeed but code is simpler this way
+      for (i <- rows(j).indices) {
         wordCount += targets.map(t => findWords(t, rows, i, j, deltas)).sum
       }
     }
@@ -86,7 +59,6 @@ object Day04 {
         val jj = j + letterDelta._1
         val ii = i + letterDelta._2
         if (jj < 0 || jj >= haystack.length || ii < 0 || ii >= haystack(jj).length) {
-          // out of bounds
           found = false
         } else {
           val findLetter = needle(index)
