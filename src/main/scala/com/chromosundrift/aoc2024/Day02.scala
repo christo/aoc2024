@@ -5,10 +5,6 @@ import scala.io.Source
 
 object Day02 {
 
-  def getTestInput1: List[String] = {
-    Source.fromResource("day02_input1.txt").getLines().toList
-  }
-
   def dump[A](x: List[A]): Unit = {
     println(x.mkString(", "))
   }
@@ -19,25 +15,8 @@ object Day02 {
     println(part2(reports))
   }
 
-  def deltas(levels: List[Int]): List[Int] = {
-    levels.sliding(2).map(pairs => pairs(1) - pairs(0)).toList
-  }
-
-  def ints(line: String): List[Int] = {
-    line.split("\\s+").map(x => x.toInt).toList
-  }
-
-  def inRange(delta: Int): Boolean = {
-    val abs = Math.abs(delta)
-    abs >= 1 && abs <= 3
-  }
-
-  def monotonic(ds: List[Int]): Boolean = {
-    consistentSigns(ds).forall(identity)
-  }
-
-  private def consistentSigns(ds: List[Int]): List[Boolean] = {
-    ds.sliding(2).map(ds => ds(0).sign == ds(1).sign).toList
+  def getTestInput1: List[String] = {
+    Source.fromResource("day02_input1.txt").getLines().toList
   }
 
   def part1(lines: List[String]): Int = {
@@ -51,28 +30,18 @@ object Day02 {
     isSafes.count(identity)
   }
 
-  def part1Alt(lines: List[String]): Int = {
-    val reports = lines.map(ints)
-    val safeList = reports.map(allSafe)
-    // return the number of safe reports
-    safeList.count(identity)
-  }
-
-  def allSafe(report: List[Int]): Boolean = {
-    val ds = deltas(report)
-    val monotonics: Seq[Boolean] = consistentSigns(ds)
-    val inRanges: Seq[Boolean] = ds.map(inRange)
-    monotonics.forall(identity) && inRanges.forall(identity)
-  }
-
-  private def part2SafeCount(report: List[Int]): Boolean = {
-    allSafe(report) || tryRemoving1(report).isDefined
+  def monotonic(ds: List[Int]): Boolean = {
+    consistentSigns(ds).forall(identity)
   }
 
   def part2(lines: List[String]): Int = {
     val is: Seq[List[Int]] = lines.map(a => ints(a))
     val safes: Seq[Boolean] = is.map(report => part2SafeCount(report))
     safes.count(identity)
+  }
+
+  private def part2SafeCount(report: List[Int]): Boolean = {
+    allSafe(report) || tryRemoving1(report).isDefined
   }
 
   private def tryRemoving1(report: List[Int]): Option[Int] = {
@@ -83,6 +52,35 @@ object Day02 {
     }
     None
   }
+
+  def part1Alt(lines: List[String]): Int = {
+    val reports = lines.map(ints)
+    val safeList = reports.map(allSafe)
+    // return the number of safe reports
+    safeList.count(identity)
+  }
+
+  def ints(line: String): List[Int] = {
+    line.split("\\s+").map(x => x.toInt).toList
+  }
+
+  def allSafe(report: List[Int]): Boolean = {
+    val ds = deltas(report)
+    val monotonics: Seq[Boolean] = consistentSigns(ds)
+    val inRanges: Seq[Boolean] = ds.map(inRange)
+    monotonics.forall(identity) && inRanges.forall(identity)
+  }
+
+  def deltas(levels: List[Int]): List[Int] = {
+    levels.sliding(2).map(pairs => pairs(1) - pairs(0)).toList
+  }
+
+  def inRange(delta: Int): Boolean = {
+    val abs = Math.abs(delta)
+    abs >= 1 && abs <= 3
+  }
+
+  private def consistentSigns(ds: List[Int]): List[Boolean] = {
+    ds.sliding(2).map(ds => ds(0).sign == ds(1).sign).toList
+  }
 }
-
-

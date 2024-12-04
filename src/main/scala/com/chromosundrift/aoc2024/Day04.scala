@@ -22,16 +22,16 @@ object Day04 {
     List((0, 0), (1, 1), (2, 2), (0, 2), (1, 1), (2, 0)), // TLtBR,BLtTR
   )
 
-  private def getInput(file: String): String = {
-    Source.fromResource(file).mkString
-  }
-
   def main(args: Array[String]): Unit = {
     val input = getInput("day04_input1.txt")
     println(solve(part1Targets, part1Deltas, getInput("day04_sample1.txt")))
     println(solve(part1Targets, part1Deltas, input))
     println(solve(part2Targets, part2Deltas, getInput("day04_sample2.txt")))
     println(solve(part2Targets, part2Deltas, input))
+  }
+
+  private def getInput(file: String): String = {
+    Source.fromResource(file).mkString
   }
 
   private def solve(targets: List[String], deltas: DeltaSpec, input: String): Int = {

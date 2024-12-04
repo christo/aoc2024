@@ -34,7 +34,7 @@ object Day03 {
         } else if (m.group(5) == "don't") {
           enabled = false
         }
-      } else if (m.group(4) == "do"){
+      } else if (m.group(4) == "do") {
         enabled = true
       }
       product
