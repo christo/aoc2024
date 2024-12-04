@@ -21,7 +21,7 @@ object Day01 {
   }
 
   private def part02(left: List[Int], right: List[Int]): Unit = {
-    val sum = left.map(v => v * right.filter(i => i == v).length).sum
+    val sum = left.map(v => v * right.count(i => i == v)).sum
     println(sum)
   }
 }
