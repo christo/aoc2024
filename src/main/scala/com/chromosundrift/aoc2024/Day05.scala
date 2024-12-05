@@ -37,10 +37,7 @@ object Day05 {
     }
   }
 
-  private def middle(ps: PageSequence): Int = {
-    assert((ps.length % 2) == 1)
-    ps(ps.length/2)
-  }
+  private def middle(ps: PageSequence): Int = ps(ps.length / 2)
 
   def part1(input: Day05Input): Int = {
     input.pages.filter(inOrder(_, input.rules)).map(middle).sum
