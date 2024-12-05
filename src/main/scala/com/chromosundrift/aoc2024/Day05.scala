@@ -8,7 +8,7 @@ case class Day05Input(rules: Rules, pages: Array[PageSequence])
 
 
 object Day05 {
-  private def getInput(file: String): String = {
+  def getInput(file: String): String = {
     Source.fromResource(file).mkString
   }
 
@@ -27,8 +27,8 @@ object Day05 {
 
   def main(args: Array[String]): Unit = {
     val input = parseInput(getInput("day05_input1.txt"))
-    println(part01(input))
-    println(part02(input))
+    println(part1(input))
+    println(part2(input))
   }
 
   def inOrder(ints: PageSequence, rules: Rules): Boolean = {
@@ -60,7 +60,7 @@ object Day05 {
     ps(ps.length/2)
   }
 
-  def part01(input: Day05Input): Int = {
+  def part1(input: Day05Input): Int = {
     input.pages.filter(inOrder(_, input.rules)).map(middle).sum
   }
 
@@ -79,7 +79,7 @@ object Day05 {
     }
   }
 
-  def part02(input: Day05Input): Int = {
+  def part2(input: Day05Input): Int = {
     input.pages
       .filter(!inOrder(_, input.rules))
       .map(ps => ps.sorted(mkOrdering(input.rules)))
