@@ -6,7 +6,6 @@ type Rules = Array[(Int, Int)]
 type PageSequence = Array[Int]
 case class Day05Input(rules: Rules, pages: Array[PageSequence])
 
-
 object Day05 {
   def getInput(file: String): String = {
     Source.fromResource(file).mkString
@@ -19,7 +18,7 @@ object Day05 {
       (a, b)
     }.toArray
     val pages = pagesPart.linesIterator.map(_.split(",").map(_.toInt)).toArray
-    new Day05Input(rules, pages)
+    Day05Input(rules, pages)
   }
 
   def main(args: Array[String]): Unit = {
