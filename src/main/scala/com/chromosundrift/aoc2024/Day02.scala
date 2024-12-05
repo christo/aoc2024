@@ -2,23 +2,18 @@ package com.chromosundrift.aoc2024
 
 import scala.io.Source
 
-
 object Day02 {
 
-  def dump[A](x: List[A]): Unit = {
-    println(x.mkString(", "))
-  }
+  def dump[A](x: List[A]): Unit = println(x.mkString(", "))
 
+  def getTestInput1: List[String] = Source.fromResource("day02_input1.txt").getLines().toList
+  
   def main(args: Array[String]): Unit = {
     val reports = getTestInput1
     println(part1(reports))
     println(part2(reports))
   }
-
-  def getTestInput1: List[String] = {
-    Source.fromResource("day02_input1.txt").getLines().toList
-  }
-
+  
   def part1(lines: List[String]): Int = {
     val reports = lines.map(ints)
     val ds = reports.map(x => deltas(x))
@@ -30,9 +25,7 @@ object Day02 {
     isSafes.count(identity)
   }
 
-  def monotonic(ds: List[Int]): Boolean = {
-    consistentSigns(ds).forall(identity)
-  }
+  def monotonic(ds: List[Int]): Boolean = consistentSigns(ds).forall(identity)
 
   def part2(lines: List[String]): Int = {
     val is: Seq[List[Int]] = lines.map(a => ints(a))
@@ -40,9 +33,8 @@ object Day02 {
     safes.count(identity)
   }
 
-  private def part2SafeCount(report: List[Int]): Boolean = {
+  private def part2SafeCount(report: List[Int]): Boolean = 
     allSafe(report) || tryRemoving1(report).isDefined
-  }
 
   private def tryRemoving1(report: List[Int]): Option[Int] = {
     for (i <- report.indices) {
@@ -59,9 +51,8 @@ object Day02 {
     safeList.count(identity)
   }
 
-  def ints(line: String): List[Int] = {
+  def ints(line: String): List[Int] = 
     line.split("\\s+").map(x => x.toInt).toList
-  }
 
   def allSafe(report: List[Int]): Boolean = {
     val ds = deltas(report)
@@ -70,9 +61,8 @@ object Day02 {
     monotonics.forall(identity) && inRanges.forall(identity)
   }
 
-  def deltas(levels: List[Int]): List[Int] = {
+  def deltas(levels: List[Int]): List[Int] = 
     levels.sliding(2).map(pairs => pairs(1) - pairs(0)).toList
-  }
 
   def inRange(delta: Int): Boolean = {
     val abs = Math.abs(delta)
