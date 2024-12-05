@@ -7,9 +7,7 @@ type PageSequence = Array[Int]
 case class Day05Input(rules: Rules, pages: Array[PageSequence])
 
 object Day05 {
-  def getInput(file: String): String = {
-    Source.fromResource(file).mkString
-  }
+  def getInput(file: String): String = Source.fromResource(file).mkString
 
   def parseInput(s: String): Day05Input = {
     val Array(rulesPart, pagesPart) = s.split("\n\n")
@@ -51,7 +49,7 @@ object Day05 {
 
   def part2(input: Day05Input): Int = {
     input.pages
-      .filter(!inOrder(_, input.rules))
+      .filterNot(inOrder(_, input.rules))
       .map(ps => ps.sorted((x, y) => if (x == y) 0 else if (input.rules.contains((x, y))) -1 else 1))
       .map(middle)
       .sum
