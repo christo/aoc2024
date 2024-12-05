@@ -39,9 +39,7 @@ object Day05 {
 
   private def middle(ps: PageSequence): Int = ps(ps.length / 2)
 
-  def part1(input: Day05Input): Int = {
-    input.pages.filter(inOrder(_, input.rules)).map(middle).sum
-  }
+  def part1(input: Day05Input): Int = input.pages.filter(inOrder(_, input.rules)).map(middle).sum
 
   def part2(input: Day05Input): Int = {
     input.pages
