@@ -14,22 +14,18 @@ class Day02Spec extends AnyFlatSpec with Matchers {
     "1 3 6 7 9", // safe
   )
 
-  "day02 part 1" should "give whole correct test output" in {
-    Day02.part1(testInput) shouldBe 2
-  }
-
-  it should "give whole correct test output for alt" in {
-    Day02.part1Alt(testInput) shouldBe 2
+  "day02 part 1" should "give whole correct test output for alt" in {
+    Day02.part1(testInput.map(Day02.ints)) shouldBe 2
   }
 
   it should "work with one record" in {
     val safeRecord = testInput.take(1)
     safeRecord shouldBe List("7 6 4 2 1")
-    Day02.part1Alt(safeRecord) shouldBe 1
+    Day02.part1(safeRecord.map(Day02.ints)) shouldBe 1
   }
 
   it should "work with nonmonotonic record" in {
-    Day02.part1Alt(List(testInput(3))) shouldBe 0
+    Day02.part1(List(testInput(3)).map(Day02.ints)) shouldBe 0
   }
 
   "safes" should "work with test input" in {
@@ -97,15 +93,11 @@ class Day02Spec extends AnyFlatSpec with Matchers {
     monos shouldBe List(true, true, true, false, false, true)
   }
 
-  "Day02" should "solve part 1" in {
-    Day02.part1(Day02.getTestInput1) shouldBe 371
-  }
-
-  it should "solve part 1 Alt" in {
-    Day02.part1Alt(Day02.getTestInput1) shouldBe 371
+  "Day02" should "solve part 1 Alt" in {
+    Day02.part1(Day02.getTestInput1.map(Day02.ints)) shouldBe 371
   }
 
   it should "pass test input part 2" in {
-    Day02.part2(testInput) shouldBe 4
+    Day02.part2(testInput.map(Day02.ints)) shouldBe 4
   }
 }
