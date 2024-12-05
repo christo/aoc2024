@@ -28,12 +28,12 @@ object Day05 {
   }
 
   private def inOrder(ints: PageSequence, rules: Rules): Boolean = {
-    val pages = ints.zipWithIndex
+    val pageIndices = ints.zipWithIndex.toMap
     rules.forall { case (before, after) =>
-      (for {
-        (_, beforeIndex) <- pages.find(_._1 == before)
-        (_, afterIndex)  <- pages.find(_._1 == after)
-      } yield beforeIndex < afterIndex).getOrElse(true)
+      (pageIndices.get(before), pageIndices.get(after)) match {
+        case (Some(i), Some(j)) => i < j
+        case _ => true
+      }
     }
   }
 
