@@ -30,13 +30,12 @@ object Day04 {
     println(solve(part2Targets, part2Deltas, input))
   }
 
-  private def getInput(file: String): String = {
-    Source.fromResource(file).mkString
-  }
+  private def getInput(file: String): String = Source.fromResource(file).mkString
 
   private def solve(targets: List[String], deltas: DeltaSpec, input: String): Int = {
     var wordCount = 0
     val rows = input.split('\n')
+    assert(rows.nonEmpty && rows.forall(_.length == rows(0).length))
 
     assert(rows.length > 0)
     val rowLength = rows(0).length
