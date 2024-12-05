@@ -11,10 +11,9 @@ object Day05 {
 
   def parseInput(s: String): Day05Input = {
     val Array(rulesPart, pagesPart) = s.split("\n\n")
-    val rules = rulesPart.linesIterator.map { line =>
-      val Array(a, b) = line.split('|').map(_.toInt)
-      (a, b)
-    }.toArray
+    val rules = rulesPart.linesIterator.map(_.split('|').map(_.toInt) match {
+      case Array(a, b) => (a, b)
+    }).toArray
     val pages = pagesPart.linesIterator.map(_.split(",").map(_.toInt)).toArray
     Day05Input(rules, pages)
   }
