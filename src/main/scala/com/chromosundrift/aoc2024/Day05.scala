@@ -23,8 +23,11 @@ object Day05 {
   }
 
   def main(args: Array[String]): Unit = {
+    val sample = parseInput(getInput("day05_sample1.txt"))
     val input = parseInput(getInput("day05_input1.txt"))
+    println(part1(sample))
     println(part1(input))
+    println(part2(sample))
     println(part2(input))
   }
 
