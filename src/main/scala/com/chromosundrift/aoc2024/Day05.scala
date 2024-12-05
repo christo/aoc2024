@@ -13,15 +13,12 @@ object Day05 {
   }
 
   def parseInput(s: String): Day05Input = {
-    val parts = s.split("\n\n")
-    assert(parts.length == 2)
-    val rules = parts(0).split("\n").map { l =>
-      val ints = l.split('|').map(_.toInt)
-      assert(ints.length == 2)
-      val rule = (ints(0), ints(1))
-      rule
-    }
-    val pages: Array[Array[Int]] = parts(1).split("\n").map(_.split(",").map(_.toInt))
+    val Array(rulesPart, pagesPart) = s.split("\n\n")
+    val rules = rulesPart.linesIterator.map { line =>
+      val Array(a, b) = line.split('|').map(_.toInt)
+      (a, b)
+    }.toArray
+    val pages = pagesPart.linesIterator.map(_.split(",").map(_.toInt)).toArray
     new Day05Input(rules, pages)
   }
 
@@ -31,27 +28,13 @@ object Day05 {
     println(part2(input))
   }
 
-  def inOrder(ints: PageSequence, rules: Rules): Boolean = {
-    val pages: Array[(Int, Int)] = ints.zipWithIndex
-    rules.forall { r =>
-      val before: Option[(Int, Int)] = pages.find((t: (Int, Int)) => t._1 == r._1)
-      if (before.isDefined) {
-        val after: Option[(Int, Int)] = pages.find((t: (Int, Int)) => t._1 == r._2)
-        if (after.isDefined) {
-          // both before and after pages specified in rule are found
-          // get indices
-          val bi = before.get._2
-          val ai = after.get._2
-          bi < ai
-        } else {
-          // after missing, no rule break
-          true
-        }
-      }
-      else {
-        // before missing, no rule break
-        true
-      }
+  private def inOrder(ints: PageSequence, rules: Rules): Boolean = {
+    val pages = ints.zipWithIndex
+    rules.forall { case (before, after) =>
+      (for {
+        (_, beforeIndex) <- pages.find(_._1 == before)
+        (_, afterIndex)  <- pages.find(_._1 == after)
+      } yield beforeIndex < afterIndex).getOrElse(true)
     }
   }
 
@@ -64,25 +47,10 @@ object Day05 {
     input.pages.filter(inOrder(_, input.rules)).map(middle).sum
   }
 
-  def mkOrdering(rules: Rules): Ordering[Int] = {
-    new Ordering[Int] {
-      def compare(x: Int, y: Int): Int = {
-        if (x == y) {
-          0
-        } else {
-          val wrong = rules.find((r: (Int, Int)) => x == r._1 && y == r._2)
-          wrong match
-            case Some(_) => -1
-            case _ => 1
-        }
-      }
-    }
-  }
-
   def part2(input: Day05Input): Int = {
     input.pages
       .filter(!inOrder(_, input.rules))
-      .map(ps => ps.sorted(mkOrdering(input.rules)))
+      .map(ps => ps.sorted((x, y) => if (x == y) 0 else if (input.rules.contains((x, y))) -1 else 1))
       .map(middle)
       .sum
   }
