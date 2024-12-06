@@ -45,5 +45,5 @@ build/
 
 ### Scala ###
 .bsp/
-/haskell/day01/dist-newstyle/
-/haskell/day01/tags
+/haskell/*/dist-newstyle/
+/haskell/*/tags
