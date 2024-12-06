@@ -2,6 +2,6 @@
 
 My solutions to the AOC 2024 programming competition.
 
-Code is in Scala because I was feeling rusty in it.
+Code is in Scala because I am feeling rusty in it.
 
 Build with `sbt`.
