@@ -17,11 +17,10 @@ object Day02 {
   }
 
   private def tryRemoving1(report: List[Int]): Option[Int] = {
-    for (i <- report.indices) {
+    report.indices.find { i =>
       val oneRemoved = report.zipWithIndex.filter(_._2 != i)
-      if (allSafe(oneRemoved.map(_._1))) return Some(i)
+      allSafe(oneRemoved.map(_._1))
     }
-    None
   }
 
   def part1(reports: List[List[Int]]): Int = reports.count(allSafe)
