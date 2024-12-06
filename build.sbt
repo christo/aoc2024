@@ -1,4 +1,6 @@
-import sbt.addCommandAlias
+import sbt._
+import Keys._
+import complete.DefaultParsers._
 
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.3.4"
@@ -17,6 +19,27 @@ lazy val root = (project in file("."))
           println("Available days:")
           mainClasses.foreach(main => println(s"  $main"))
           newState
+      }
+    },
+
+    commands += Command.command("runAll") { state =>
+      Project.extract(state).runTask(Compile / discoveredMainClasses, state) match {
+        case (newState, mainClasses) =>
+          val dayClasses = mainClasses.filter(_.contains("Day")).sorted
+          var currentState = newState
+          println("\nRunning all days:")
+
+          dayClasses.foreach { mainClass =>
+            val start = System.nanoTime()
+            println(s"\n=== Running $mainClass ===")
+
+            val cmd = s"runMain $mainClass"
+            currentState = Command.process(cmd, currentState, s =>
+              println(s"Error running $mainClass: $s"))
+            println(s"=== Completed in ${(System.nanoTime() - start) / 1000000}ms ===")
+          }
+
+          currentState
       }
     }
   )
