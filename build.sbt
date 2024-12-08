@@ -13,6 +13,7 @@ lazy val root = (project in file("."))
     addCommandAlias("day04", "runMain com.chromosundrift.aoc2024.Day04"),
     addCommandAlias("day05", "runMain com.chromosundrift.aoc2024.Day05"),
     addCommandAlias("day06", "runMain com.chromosundrift.aoc2024.Day06"),
+    addCommandAlias("day07", "runMain com.chromosundrift.aoc2024.Day07"),
 
     commands += Command.command("listDays") { state =>
       Project.extract(state).runTask(Compile / discoveredMainClasses, state) match {
