@@ -6,6 +6,7 @@ import scala.util.matching.Regex
 //noinspection ScalaWeakerAccess
 object Day09 {
   private val degragRx: Regex = """^(\d*)\.(.*)(\d)(\.*)$""".r
+  private val EMPTY_ID = -1
 
   def getInput(file: String): String = Source.fromResource(file).mkString
 
@@ -20,18 +21,15 @@ object Day09 {
     println(part2(input))
   }
 
+  def part1(input: String) = checksumPart1(defragPart1(parsePart1(input).seq))
 
-  def part1(input: String) = {
-    checksumPart1(defragPart1(parsePart1(input).seq))
-  }
-
-  def part2(input: String) = {
-    checksumPart2(defragPart2(parsePart2(input)))
-  }
+  def part2(input: String) = checksumPart2(defragPart2(parsePart2(input)))
 
   def checksumPart2(files: Seq[FileBlock]): Long = {
     files.flatMap(f => List.fill(f.length)(f.id.toLong))
-      .zipWithIndex.map((id, index) => if (id >= 0) id * index else 0).sum
+      .zipWithIndex
+      .map((id, index) => if (id >= 0) id * index else 0)
+      .sum
   }
 
   def parsePart1(diskmap: String): DiskMap = {
@@ -45,24 +43,15 @@ object Day09 {
     DiskMap(file.map(_._1).zipWithIndex.map(t => FileBlock(t._2, t._1)), free.map(_._1))
   }
 
+  def checksumPart1(seq: List[Int]): Long = seq.filter(_ >= 0).zipWithIndex.map(_ * _.toLong).sum
+
   /**
    * List of variable size fileblocks which may be empty
    */
-  def parsePart2(diskmap: String): IndexedSeq[FileBlock] = {
-    diskmap.map(_.asDigit).zipWithIndex.map { (len, index) =>
-      if (index % 2 == 0) {
-        FileBlock(index / 2, len)
-      } else {
-        FileBlock(-1, len)
-      }
+  def parsePart2(input: String): IndexedSeq[FileBlock] =
+    input.map(_.asDigit).zipWithIndex.map { case (len, index) =>
+      FileBlock(if (index % 2 == 0) index / 2 else EMPTY_ID, len)
     }
-  }
-
-  def checksumPart1(seq: List[Int]): Long = {
-    assert(seq.min >= -1) // sanity
-    // do not use empty blocks (-1)
-    seq.filter(_ >= 0).zipWithIndex.map(_ * _.toLong).sum
-  }
 
   def defragPart1(blocks: List[Int]): List[Int] = {
     // two indices counting from each direction to swap
@@ -71,9 +60,9 @@ object Day09 {
     val plotArray = blocks.toArray
     while (left < right) {
       // only move 1 at a time
-      if (plotArray(left) != -1) {
+      if (plotArray(left) != EMPTY_ID) {
         left += 1
-      } else if (plotArray(right) == -1) {
+      } else if (plotArray(right) == EMPTY_ID) {
         right -= 1
       } else {
         // swap dot on left with number on right
@@ -91,16 +80,16 @@ object Day09 {
     fileBlocks.foldLeft(files) { (currentBlocks, fileToMove) =>
       val originalPos = currentBlocks.indexWhere(_.id == fileToMove.id)
       currentBlocks.indexWhere(block => block.isEmpty() && block.length >= fileToMove.length) match {
-        case -1 => currentBlocks // No space found, skip
+        case EMPTY_ID => currentBlocks // No space found, skip
         case emptyIdx if emptyIdx < originalPos =>
           val emptyBlock = currentBlocks(emptyIdx)
-          val updatedBlocks = currentBlocks.updated(originalPos, FileBlock(-1, fileToMove.length))
+          val updatedBlocks = currentBlocks.updated(originalPos, FileBlock(EMPTY_ID, fileToMove.length))
 
           val withInsertedFile =
             if (emptyBlock.length == fileToMove.length) {
               updatedBlocks.updated(emptyIdx, fileToMove)
             } else {
-              val leftovers = FileBlock(-1, emptyBlock.length - fileToMove.length)
+              val leftovers = FileBlock(EMPTY_ID, emptyBlock.length - fileToMove.length)
               updatedBlocks.patch(emptyIdx, Seq(fileToMove, leftovers), 1)
             }
 
@@ -108,7 +97,7 @@ object Day09 {
           withInsertedFile.foldLeft(IndexedSeq.empty[FileBlock]) { (acc, current) =>
             acc.lastOption match {
               case Some(last) if last.isEmpty() && current.isEmpty() =>
-                acc.init :+ FileBlock(-1, last.length + current.length)
+                acc.init :+ FileBlock(EMPTY_ID, last.length + current.length)
               case _ => acc :+ current
             }
           }
@@ -122,7 +111,7 @@ object Day09 {
    */
   def plotSimple(files: IndexedSeq[FileBlock]): String = {
     assert(files.forall(_.id < 10))
-    files.map(f => (if (f.id > -1) f.id.toString else ".") * f.length).mkString
+    files.map(f => (if (f.id > EMPTY_ID) f.id.toString else ".") * f.length).mkString
   }
 }
 
