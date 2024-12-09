@@ -45,7 +45,7 @@ object Day08 {
   }
 
   /**
-   * @param rows square map
+   * @param rows rectangular map
    * @return a predicate returning true iff a given location is on the map
    */
   def onMap(rows: Array[String]): V2 => Boolean = {
