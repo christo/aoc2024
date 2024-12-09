@@ -1,70 +1,77 @@
 package com.chromosundrift.aoc2024
 
-import com.chromosundrift.aoc2024.Day09.{getInput, moveAll2, parse}
+import com.chromosundrift.aoc2024.Day09.{part1, part2, checksumPart2, defragPart1, defragPart2, getInput, parsePart1, parsePart2, plotSimple}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class Day09Spec extends AnyFlatSpec with Matchers {
+  private val SAMPLE = "2333133121414131402"
   "getInput" should "fucking work" in {
-    Day09.getInput("day09_sample1.txt") shouldBe "2333133121414131402"
+    getInput("day09_sample1.txt") shouldBe SAMPLE
   }
 
   "parse" should "get 3 files in tiny sample" in {
-    val dm = Day09.parse("12345")
+    val dm = parsePart1("12345")
     dm.files.length shouldBe 3
   }
 
   it should "have sequential file indexes" in {
-    val dm = Day09.parse("12345")
+    val dm = parsePart1("12345")
     dm.files(1).id shouldBe 1
   }
 
   it should "get 2 empties in tiny sample" in  {
-    val dm = Day09.parse("12345")
+    val dm = parsePart1("12345")
     dm.empties.length shouldBe 2
   }
 
   it should "gather no bads" in {
-    val dm = Day09.parse("2333133121414131402")
+    val dm = parsePart1(SAMPLE)
     dm.valid() shouldBe true
   }
 
   it should "not give bads for sample" in {
-    parse(getInput("day09_sample1.txt")).valid() shouldBe true
+    parsePart1(getInput("day09_sample1.txt")).valid() shouldBe true
   }
 
   it should "handle leading zeroes somehow" in {
-    val fm = parse("0000004")
+    val fm = parsePart1("0000004")
     fm.files(3).length shouldBe 4
   }
 
-  "plot" should "match example" in {
-    val dm = Day09.parse("2333133121414131402")
-    dm.plot shouldBe "00...111...2...333.44.5555.6666.777.888899"
+  "checksumPart2" should "match sample" in {
+    val blocks = parsePart2(SAMPLE)
+    val defragged = defragPart2(blocks)
+//    println(s"defragged fileblocks: ${defragged}")
+    checksumPart2(defragged) shouldBe 2858L
   }
 
-  it should "handle 90909" in {
-    val m = parse("90909")
-    m.plot shouldBe "000000000111111111222222222"
+  "parsePart2" should "have correct ids" in {
+    val blocks = parsePart2(SAMPLE)
+    blocks.map(_.id).max shouldBe 9
   }
 
-  it should "handle leading zeroes in diskmap" in {
-    val fm = parse("00000049")
-    fm.plot shouldBe "3333........."
+  it should "have samplePlot matching sample" in {
+    val blocks = parsePart2(SAMPLE)
+    plotSimple(blocks) shouldBe "00...111...2...333.44.5555.6666.777.888899"
   }
 
-  "move1" should "match first basic example" in {
-    Day09.move1("0..111....22222") shouldBe Some("02.111....2222.")
+  "defragPart2" should "match sample" in {
+    val expectedSimplePlot = "00992111777.44.333....5555.6666.....8888.."
+    val blocks = parsePart2(SAMPLE)
+    val defragged = defragPart2(blocks)
+    val defragPlot = plotSimple(defragged)
+    defragPlot shouldBe expectedSimplePlot
   }
 
-  it should "not move already compacted shit" in {
-      Day09.move1("3333.........") shouldBe None
+  "part1" should "solve puzzle input" in {
+    val input = getInput("day09_input2.txt").trim
+    part1(input) shouldBe 6344673854800L
   }
-
-  "moveAll" should "match sample" in {
-    val input = "00...111...2...333.44.5555.6666.777.888899"
-    val expected = "0099811188827773336446555566.............."
-    Day09.moveAll(input) shouldBe expected
+  
+  "part2" should "solve my puzzle input" in {
+    val input = getInput("day09_input2.txt").trim
+    part2(input) shouldBe 6360363199987L
   }
 
 }
