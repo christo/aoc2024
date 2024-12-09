@@ -64,7 +64,6 @@ object Day09 {
     seq.filter(_ >= 0).zipWithIndex.map(_ * _.toLong).sum
   }
 
-
   def defragPart1(blocks: List[Int]): List[Int] = {
     // two indices counting from each direction to swap
     var left = 0
@@ -86,64 +85,49 @@ object Day09 {
     plotArray.toList
   }
 
-
   def defragPart2(files: IndexedSeq[FileBlock]): IndexedSeq[FileBlock] = {
-    // files sorted by id, asc with single empty blocks
-    val fileBlocks = files.filter(!_.isEmpty()).sortBy(_.id)(Ordering[Int].reverse)
+    val fileBlocks = files.filterNot(_.isEmpty()).sortBy(_.id)(Ordering[Int].reverse)
 
     fileBlocks.foldLeft(files) { (currentBlocks, fileToMove) =>
       val originalPos = currentBlocks.indexWhere(_.id == fileToMove.id)
+      currentBlocks.indexWhere(block => block.isEmpty() && block.length >= fileToMove.length) match {
+        case -1 => currentBlocks // No space found, skip
+        case emptyIdx if emptyIdx < originalPos =>
+          val emptyBlock = currentBlocks(emptyIdx)
+          val updatedBlocks = currentBlocks.updated(originalPos, FileBlock(-1, fileToMove.length))
 
-      {
-        val index = currentBlocks.indexWhere(block => block.isEmpty() && block.length >= fileToMove.length)
-        Option.when(index != -1)(index)
-      } match {
-        case None => currentBlocks // No space found skip
-        case Some(emptySpaceIndex) =>
-          if (emptySpaceIndex < originalPos) {
-            val emptyBlock = currentBlocks(emptySpaceIndex)
-
-            val afterRemoval = currentBlocks.updated(originalPos, FileBlock(-1, fileToMove.length))
-
-            val withInsertedFile = if (emptyBlock.length == fileToMove.length) {
-              afterRemoval.updated(emptySpaceIndex, fileToMove)
+          val withInsertedFile =
+            if (emptyBlock.length == fileToMove.length) {
+              updatedBlocks.updated(emptyIdx, fileToMove)
             } else {
-              val remainingEmpty = FileBlock(-1, emptyBlock.length - fileToMove.length)
-              afterRemoval.patch(emptySpaceIndex, Seq(fileToMove, remainingEmpty), 1)
+              val leftovers = FileBlock(-1, emptyBlock.length - fileToMove.length)
+              updatedBlocks.patch(emptyIdx, Seq(fileToMove, leftovers), 1)
             }
 
-            // merge empty blocks
-            withInsertedFile.foldLeft(IndexedSeq.empty[FileBlock]) { (acc, current) =>
-              if (current.isEmpty() && acc.nonEmpty && acc.last.isEmpty()) {
-                acc.init :+ FileBlock(-1, acc.last.length + current.length)
-              } else {
-                acc :+ current
-              }
+          // Merge adjacent empty blocks
+          withInsertedFile.foldLeft(IndexedSeq.empty[FileBlock]) { (acc, current) =>
+            acc.lastOption match {
+              case Some(last) if last.isEmpty() && current.isEmpty() =>
+                acc.init :+ FileBlock(-1, last.length + current.length)
+              case _ => acc :+ current
             }
-          } else {
-            currentBlocks
           }
+        case _ => currentBlocks
       }
     }
   }
 
+  /**
+   * Only works on examples where file id is single digit
+   */
   def plotSimple(files: IndexedSeq[FileBlock]): String = {
-    // only works for single digit id
-    assert(files.map(_.id).max < 10)
-    files.map { f =>
-      if (f.id > -1) {
-        f.id.toString * f.length
-      } else {
-        "." * f.length
-      }
-    }.mkString
+    assert(files.forall(_.id < 10))
+    files.map(f => (if (f.id > -1) f.id.toString else ".") * f.length).mkString
   }
 }
 
 case class FileBlock(id: Int, length: Int) {
-
   override def toString: String = s"${id}:${length}"
-
   def isEmpty(): Boolean = id == -1
 }
 
@@ -151,14 +135,6 @@ case class DiskMap(files: IndexedSeq[FileBlock], empties: IndexedSeq[Int]) {
 
   def valid(): Boolean = {
     files.filter(_.length < 0).map(fb => s"${fb.id} length ${fb.length}").isEmpty
-  }
-
-  def dump: String = {
-    val fs = files.map { f =>
-      s" ${f.id}:${f.length}\n"
-    }.mkString
-    val es = empties.mkString("\n  ")
-    s"files>\n${fs}\nempties>\n  ${es}"
   }
 
   /** Part 1 only */
