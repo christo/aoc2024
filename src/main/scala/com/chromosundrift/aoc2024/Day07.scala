@@ -51,7 +51,6 @@ object Day07 {
 
     if (numbers.length < 2) return Array.empty
 
-    // We always need numbers.length - 1 operations to use all numbers
     val requiredOps = numbers.length - 1
 
     ops.flatMap { firstOp =>
@@ -68,7 +67,6 @@ object Day07 {
         }
       }
 
-      // Only return results that used all operations (and thus all numbers)
       finalResults.map(state =>
         (numbers(0), firstOp.symbol, numbers(1), state.acc, state.expr)
       )
