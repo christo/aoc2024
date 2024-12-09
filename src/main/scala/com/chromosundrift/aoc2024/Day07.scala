@@ -6,30 +6,26 @@ type Eqn = (Long, Array[Long])
 
 object Day07 {
   def main(args: Array[String]): Unit = {
-//    val eqns: Array[Eqn] = parse(getInput("day07_sample1.txt"))
     val eqns: Array[Eqn] = parse(getInput("day07_input1.txt"))
+    println("part 1")
+    solve(eqns, part1Ops)
+    println("part 2")
+    solve(eqns, part2Ops)
+  }
+
+  private def solve(eqns: Array[(Long, Array[Long])], ops: Array[Op]): Unit = {
     var sumOfValidTargets = 0L
 
     eqns.foreach { eqn =>
-      val attempts = validateEquation(eqn)
-//      println(s"Target: ${eqn._1}, Numbers: ${eqn._2.mkString(", ")}")
+      val attempts = validateEquation(eqn, ops)
 
       if (attempts.exists(_._4 == eqn._1)) {
         val successful = attempts.find(_._4 == eqn._1).get
-//        println(s"Valid: true")
-//        println(s"Found: ${successful._5}")
-        sumOfValidTargets += eqn._1  // Add target value to sum when equation is valid
-      } else {
-//        println("Valid: false")
-//        println("Attempted calculations:")
-//        attempts.foreach { case (_, _, _, result, expression) =>
-//          println(s"  $expression = $result")
-//        }
+        sumOfValidTargets += eqn._1 // Add target value to sum when equation is valid
       }
-//      println("-" * 40)
     }
 
-    println(s"Total valid equations: ${eqns.count(e => validateEquation(e).exists(_._4 == e._1))}")
+    println(s"Total valid equations: ${eqns.count(e => validateEquation(e, part2Ops).exists(_._4 == e._1))}")
     println(s"Sum of valid equation targets: $sumOfValidTargets")
   }
 
@@ -50,7 +46,7 @@ object Day07 {
 
   private case class CalcState(acc: Long, expr: String)
 
-  private def validateEquation(eqn: Eqn): Array[(Long, String, Long, Long, String)] = {
+  private def validateEquation(eqn: (Long, Array[Long]), ops: Array[Op]): Array[(Long, String, Long, Long, String)] = {
     val numbers = eqn._2
 
     if (numbers.length < 2) return Array.empty
@@ -58,7 +54,7 @@ object Day07 {
     // We always need numbers.length - 1 operations to use all numbers
     val requiredOps = numbers.length - 1
 
-    part2Ops.flatMap { firstOp =>
+    ops.flatMap { firstOp =>
       val initial = CalcState(firstOp.fn(numbers(0), numbers(1)),
         s"${numbers(0)} ${firstOp.symbol} ${numbers(1)}")
 
