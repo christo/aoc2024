@@ -1,6 +1,6 @@
-package com.chromosundrift.aoc2024.temp
+package com.chromosundrift.aoc2024
 
-import com.chromosundrift.aoc2024.temp.Day06.{collect, getInput, guardLoops, parse, part1, part2, step}
+import com.chromosundrift.aoc2024.Day06.{collect, getInput, guardLoops, parse, part1, part2, step}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
