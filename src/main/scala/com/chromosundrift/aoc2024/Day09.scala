@@ -12,13 +12,9 @@ object Day09 {
 
   def main(args: Array[String]): Unit = {
     val input = getInput("day09_input2.txt").trim
-    if (!input.matches("[\\d\\.]+")) {
-      throw new IllegalStateException("input invalid")
-    }
-    println("part 1")
-    println(part1(input))
-    println("part 2")
-    println(part2(input))
+    require(input.matches("[\\d\\.]+"), "invalid input")
+    println(s"part 1 ${part1(input)}")
+    println(s"part 2 ${part2(input)}")
   }
 
   def part1(input: String) = checksumPart1(defragPart1(parsePart1(input).seq))
