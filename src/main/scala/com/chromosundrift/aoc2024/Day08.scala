@@ -1,5 +1,6 @@
 package com.chromosundrift.aoc2024
 
+import scala.collection.immutable
 import scala.io.Source
 
 //noinspection ScalaWeakerAccess
@@ -12,79 +13,88 @@ object Day08 {
 
   def main(args: Array[String]): Unit = {
     val rows = getInput("day08_input1.txt")
+    val locOnMap = onMap(rows)
     val antennaMap: Map[Char, List[(Int, Int)]] = parse(rows)
     println("part1")
-    part1(rows, antennaMap)
-    // part two is geborked right now and gives the wrong answer:
+    println(part1(locOnMap, antennaMap))
     println("part2")
-    part2(rows, antennaMap)
+    println(part2(locOnMap, antennaMap))
   }
 
-  def part1(rows: Array[String], antennaMap: Map[Char, List[V2]]): Unit = {
-    val filter = onMap(rows)
-    val antiNodes = antennaMap.map(f => (f._1, antinodes(f._2, 1).filter(filter))).values.flatten.toSet
-    println(antiNodes.size)
+  /**
+   * Find antinodes using a fixed distance multiplier of 1
+   */
+  def part1(filter: V2 => Boolean, antennaMap: Map[Char, List[V2]]): Int = {
+    val multiplier = 1
+    antennaMap.map(f => (f._1, antinodes(f._2, multiplier).filter(filter))).values.flatten.toSet.size
   }
 
-  def part2(rows: Array[String], antennaMap: Map[Char, List[V2]]): Unit = {
-    val filter = onMap(rows)
+  /**
+   * Find antinodes using increasing distance multiplier until no antinodes match filter
+   */
+  def part2(filter: V2 => Boolean, antennaMap: Map[Char, List[V2]]): Int = {
 
     @annotation.tailrec
     def loop(locs: List[(Int, Int)], multiplier: Int, acc: List[V2]): List[V2] = {
       val result = antinodes(locs, multiplier).filter(filter)
-      if (result.isEmpty) {
-        println(s"max multiplier reached: ${multiplier}")
-        acc
-      }
+      if (result.isEmpty) acc
       else loop(locs, multiplier + 1, acc ++ result)
     }
 
-    // collect all antinodes, increasing scale of delta until no results are returned
-    // (because all more distant antinodes are off-map)
-    val antinodesByFreq = antennaMap.map(f => (f._1, loop(f._2, 1, List.empty)))
-    plot(rows, antinodesByFreq)
-    println(antinodesByFreq.values.flatten.toSet.size)
+    antennaMap.map(f => (f._1, loop(f._2, 0, List.empty))).values.flatten.toSet.size
   }
 
+  /**
+   * @param rows square map
+   * @return a predicate returning true iff a given location is on the map
+   */
   def onMap(rows: Array[String]): V2 => Boolean = {
     (r, c) => r >= 0 && rows.indices.contains(r) && rows(0).indices.contains(c)
   }
 
+  /**
+   * Find antinodes for antennas at locs using antenna distance multiplier n
+   */
   def antinodes(locs: List[V2], n: Int): List[(V2)] = {
     locs.flatMap(i => locs.filter(_ != i).map(j => (i, j)))
       .flatMap((a: V2, b: V2) => extend(a, b, n))
   }
 
-  private def extend(a: V2, b: V2, n: Int) = {
+  /**
+   * Bidirectional colinear extension of the a,b segment multiplied by harmonic scale
+   */
+  private def extend(a: V2, b: V2, scale: Int) = {
     val (aRow, aCol) = a
     val (bRow, bCol) = b
-    val (deltaRow, deltaCol) = ((bRow - aRow) * n, (bCol - aCol) * n)
+    val (deltaRow, deltaCol) = ((bRow - aRow) * scale, (bCol - aCol) * scale)
     List((aRow - deltaRow, aCol - deltaCol), (bRow + deltaRow, bCol + deltaCol))
   }
 
-  private def dump(antennaMap: Map[Char, List[V2]]): Unit = {
-    antennaMap.map((byFreq: (Char, List[V2])) => {
+  /**
+   * Print a summary of the antennas found for each frequency on the given antennaMap
+   */
+  private def dump(antennaMap: Map[Char, List[V2]]) = antennaMap.map((byFreq: (Char, List[V2])) => {
       val freqChar: Char = byFreq._1
       s"$freqChar: ${byFreq._2.mkString(",")}"
     }).foreach(println)
-  }
+
 
   /**
-   * Plot a the originalMap with antennas on it
-   * @param originalMap
-   * @param antennaMap
+   * Plot the originalMap with marked overlay positions on it (preserving antenna locations)
+   * @param originalMap provided puzzle input
+   * @param overlay locations by frequency to plot on top of original map
    */
-  def plot(originalMap: Array[String], antennaMap: Map[Char, List[V2]]): Unit = {
+  def plot(originalMap: Array[String], overlay: Map[Char, List[V2]]): Unit = {
     println("PLOT:")
-    originalMap.zipWithIndex.foreach { (row: String, r: Int) =>
-      row.zipWithIndex.foreach { (cell: Char, c: Int) =>
-        antennaMap.map { (f, loc) =>
-          if ((cell == '.' || cell == '#') && loc.contains((r, c))) print('$') else print(cell)
-        }
+    val composite = originalMap.zipWithIndex.map { case (row, rowIdx) =>
+      val chars = row.zipWithIndex.map { case (cell, colIdx) =>
+        if ((cell == '.' || cell == '#') &&
+          overlay.values.flatten.toList.contains((rowIdx, colIdx))) '$'
+        else cell
       }
-      println()
+      chars.mkString
     }
-
+    composite.foreach(println)
   }
 
   def parse(rows: Array[String]): Map[Char, List[V2]] = {
@@ -101,7 +111,7 @@ object Day08 {
       .view
       .mapValues(pairs => pairs.map(t => (t._2, t._3)).toList)
       .toMap
-      .filter(_._2.length >= 2)
+      .filter(_._2.length >= 2)  // only use freq antennas numbering at least two
   }
 
 }
